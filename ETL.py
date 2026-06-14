@@ -24,12 +24,16 @@ def extract(url, table_attribs):
     return df
 
 def transform(df):
-    GDP_list = df["GDP_USD_millions"].tolist()
-    print(GDP_list)
-    GDP_list = [float("".join(x.split(','))) for x in GDP_list]
-    GDP_list = [np.round(x/1000, 2) for x in GDP_list]
-    df['GDP_USD_millions'] = GDP_list
-    df = df.rename(columns = {"GDP_USD_millions":"GDP_USD_billions"})
+    #print(df)
+    df["GDP_USD_millions"] = (
+        df["GDP_USD_millions"]
+        .str.replace(",", "", regex=False)
+        .astype(float)
+        )
+
+    df["GDP_USD_millions"] = np.round(df["GDP_USD_millions"] / 1000, 2)
+
+    df = df.rename(columns={"GDP_USD_millions": "GDP_USD_billions"})
 
     return df
 
@@ -51,50 +55,66 @@ def log_progress(message):
     with open("./etl_project_log.txt","a") as f: 
         f.write(timestamp + ' : ' + message + '\n')
 
+# ETL Process
 
+try:
+    url = 'https://web.archive.org/web/20230902185326/https://en.wikipedia.org/wiki/List_of_countries_by_GDP_%28nominal%29'
+    table_attribs = ["Country", "GDP_USD_millions"]
+    db_name = 'World_Economies.db'
+    table_name = 'Countries_by_GDP'
+    csv_path = 'Countries_by_GDP.csv'
 
-url = 'https://web.archive.org/web/20230902185326/https://en.wikipedia.org/wiki/List_of_countries_by_GDP_%28nominal%29'
-table_attribs = ["Country", "GDP_USD_millions"]
-db_name = 'World_Economies.db'
-table_name = 'Countries_by_GDP'
-csv_path = 'Countries_by_GDP.csv'
+    print('Start Extract data')
+    log_progress('Start Extract data')
+    extract_data = extract(url, table_attribs)
+    log_progress('End Extract data')
+    print('End Extract data')
 
-print('Start Extract data')
-log_progress('Start Extract data')
-extract_data = extract(url, table_attribs)
-log_progress('End Extract data')
-print('End Extract data')
+    print('Start Transform data')
+    log_progress('Start Transform data')
+    transform_data = transform(extract_data)
+    log_progress('End Transform data')
+    print('End Transform data')
 
-print('Start Transform data')
-log_progress('Start Transform data')
-transform_data = transform(extract_data)
-log_progress('End Transform data')
-print('End Transform data')
+    print('Start Load data to csv')
+    log_progress('Start Load data to csv')
+    load_to_csv(transform_data, csv_path)
+    log_progress('End Load data to csv')
+    print('End Load data to csv')
 
-print('Start Load data to csv')
-log_progress('Start Load data to csv')
-load_to_csv(transform_data, csv_path)
-log_progress('End Load data to csv')
-print('End Load data to csv')
+    print('Connect to DB')
+    log_progress('Connect to DB')
+    conn = sqlite3.connect(db_name)
+    log_progress('DB is connected')
+    print('DB is connected')
 
-print('Connect to DB')
-log_progress('Connect to DB')
-conn = sqlite3.connect(db_name)
-log_progress('DB is connected')
-print('DB is connected')
+    print('Start Load data to db')
+    log_progress('Start Load data to db')
+    load_to_db(transform_data, conn, table_name)
+    log_progress('End Load data to db')
+    print('End Load data to db')
 
-print('Start Load data to db')
-log_progress('Start Load data to db')
-load_to_db(transform_data, conn, table_name)
-log_progress('End Load data to db')
-print('End Load data to db')
+    print('Start Query from db')
+    log_progress('Start Query from db')
+    run_query(f"SELECT * from {table_name} WHERE GDP_USD_billions >= 100", conn)
+    log_progress('End Query from db')
+    print('End Query from db')
 
-print('Start Query from db')
-log_progress('Start Query from db')
-run_query(f"SELECT * from {table_name} WHERE GDP_USD_billions >= 100", conn)
-log_progress('End Query from db')
-print('End Query from db')
+    log_progress('Process Complete.')
 
-log_progress('Process Complete.')
+except Exception as e:
+    print(f"\n[PROCESS FAILED] ETL process stopped because of error: {e}")
 
-conn.close()
+    try:
+        log_progress(f"Process Failed: {e}")
+    except:
+        print("[ERROR] Could not write failure message to log file.")
+
+finally:
+    try:
+        conn.close()
+        print("Database connection closed.")
+    except NameError:
+        print("Database connection was not created.")
+    except Exception as e:
+        print(f"[ERROR] Failed to close database connection: {e}")
