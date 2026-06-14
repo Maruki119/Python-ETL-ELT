@@ -76,3 +76,16 @@
 2026-Jun-14-16:31:22 : Start Query from db
 2026-Jun-14-16:31:22 : End Query from db
 2026-Jun-14-16:31:22 : Process Complete.
+2026-Jun-14-17:09:33 : Start Extract data
+2026-Jun-14-17:09:35 : End Extract data
+2026-Jun-14-17:09:35 : Start Transform data
+2026-Jun-14-17:09:35 : End Transform data
+2026-Jun-14-17:09:35 : Start Load data to csv
+2026-Jun-14-17:09:35 : End Load data to csv
+2026-Jun-14-17:09:35 : Connect to DB
+2026-Jun-14-17:09:35 : DB is connected
+2026-Jun-14-17:09:35 : Start Load data to db
+2026-Jun-14-17:09:35 : End Load data to db
+2026-Jun-14-17:09:35 : Start Query from db
+2026-Jun-14-17:09:35 : End Query from db
+2026-Jun-14-17:09:35 : Process Complete.

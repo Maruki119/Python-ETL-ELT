@@ -1,0 +1,17 @@
+2026-Jun-14-17:55:04 : Downloaded exchange_rate.csv successfully.
+2026-Jun-14-17:55:04 : Read exchange_rate.csv successfully.
+2026-Jun-14-17:55:04 : Start of ETL process
+2026-Jun-14-17:55:04 : Start Extract data
+2026-Jun-14-17:55:05 : End Extract data
+2026-Jun-14-17:55:05 : Start Transform data
+2026-Jun-14-17:55:05 : End Transform data
+2026-Jun-14-17:55:05 : Start Load data to csv
+2026-Jun-14-17:55:05 : End Load data to csv
+2026-Jun-14-17:55:05 : Connect to DB
+2026-Jun-14-17:55:05 : DB is connected
+2026-Jun-14-17:55:05 : Start Load data to db
+2026-Jun-14-17:55:05 : Data loaded to database table Largest_banks
+2026-Jun-14-17:55:05 : End Load data to db
+2026-Jun-14-17:55:05 : Start Query from db
+2026-Jun-14-17:55:05 : End Query from db
+2026-Jun-14-17:55:05 : End of ETL process

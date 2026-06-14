@@ -14,6 +14,7 @@ def extract(url, table_attribs):
 
     for row in rows:
         col = row.find_all('td')
+        print(col)
         if len(col) != 0:
             if col[0].find('a') is not None and '—'not in col[2]:
                 data_dict = {'Country': col[0].a.contents[0],
