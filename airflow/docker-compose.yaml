@@ -125,6 +125,15 @@ services:
       - kafka
     restart: always    
 
+  kafka-tools:
+    image: apache/kafka:3.8.0
+    container_name: kafka-tools
+    profiles:
+      - debug
+    entrypoint: ["sleep", "infinity"]
+    depends_on:
+      - kafka
+
   postgres:
     image: postgres:16
     environment:
